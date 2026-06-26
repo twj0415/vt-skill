@@ -1,0 +1,4 @@
+interface:
+  display_name: "项目文档搭建"
+  short_description: "为零到一项目建立可交接可续做的开发文档体系"
+  default_prompt: "使用 $project-doc-bootstrap 为当前项目搭建一套可持续交接的开发文档体系。"
