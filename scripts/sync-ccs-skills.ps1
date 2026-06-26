@@ -1,6 +1,12 @@
 param(
   [string]$SourceRoot = (Split-Path -Parent $PSScriptRoot),
   [string]$TargetRoot = "$env:USERPROFILE\.cc-switch\skills",
+  [string[]]$TargetRoots = @(
+    "$env:USERPROFILE\.cc-switch\skills",
+    "$env:USERPROFILE\.codex\skills",
+    "$env:USERPROFILE\.agents\skills",
+    "$env:USERPROFILE\.claude\skills"
+  ),
   [switch]$ReplaceExisting,
   [switch]$DryRun
 )
@@ -18,19 +24,17 @@ function Get-FullPath {
 }
 
 $sourceRootFull = Get-FullPath $SourceRoot
-$targetRootFull = Get-FullPath $TargetRoot
+
+if ($PSBoundParameters.ContainsKey("TargetRoot")) {
+  $TargetRoots = @($TargetRoot)
+}
+
+$targetRootFullList = $TargetRoots |
+  ForEach-Object { Get-FullPath $_ } |
+  Select-Object -Unique
 
 if (-not (Test-Path -LiteralPath $sourceRootFull -PathType Container)) {
   throw "SourceRoot does not exist: $sourceRootFull"
-}
-
-if (-not (Test-Path -LiteralPath $targetRootFull -PathType Container)) {
-  if ($DryRun) {
-    Write-Step "Would create target root: $targetRootFull"
-  } else {
-    New-Item -ItemType Directory -Path $targetRootFull | Out-Null
-    Write-Step "Created target root: $targetRootFull"
-  }
 }
 
 $skills = Get-ChildItem -LiteralPath $sourceRootFull -Directory -Force |
@@ -45,56 +49,69 @@ if (-not $skills) {
   exit 0
 }
 
-foreach ($skill in $skills) {
-  $source = Get-FullPath $skill.FullName
-  $target = Join-Path $targetRootFull $skill.Name
-  $targetExists = Test-Path -LiteralPath $target
+foreach ($targetRootFull in $targetRootFullList) {
+  Write-Step "Target root: $targetRootFull"
 
-  if (-not $targetExists) {
+  if (-not (Test-Path -LiteralPath $targetRootFull -PathType Container)) {
     if ($DryRun) {
-      Write-Step "Would link $target -> $source"
+      Write-Step "Would create target root: $targetRootFull"
     } else {
-      New-Item -ItemType Junction -Path $target -Target $source | Out-Null
-      Write-Step "Linked $target -> $source"
+      New-Item -ItemType Directory -Path $targetRootFull | Out-Null
+      Write-Step "Created target root: $targetRootFull"
     }
-    continue
   }
 
-  $targetItem = Get-Item -LiteralPath $target -Force
-  if ($targetItem.LinkType -in @("Junction", "SymbolicLink")) {
-    $currentTarget = $targetItem.Target
-    if ($currentTarget -eq $source) {
-      Write-Step "Already linked: $($skill.Name)"
+  foreach ($skill in $skills) {
+    $source = Get-FullPath $skill.FullName
+    $target = Join-Path $targetRootFull $skill.Name
+    $targetExists = Test-Path -LiteralPath $target
+
+    if (-not $targetExists) {
+      if ($DryRun) {
+        Write-Step "Would link $target -> $source"
+      } else {
+        New-Item -ItemType Junction -Path $target -Target $source | Out-Null
+        Write-Step "Linked $target -> $source"
+      }
       continue
     }
 
-    if ($DryRun) {
-      Write-Step "Would replace existing link $target from $currentTarget to $source"
-    } else {
-      Remove-Item -LiteralPath $target -Force
-      New-Item -ItemType Junction -Path $target -Target $source | Out-Null
-      Write-Step "Re-linked $target -> $source"
+    $targetItem = Get-Item -LiteralPath $target -Force
+    if ($targetItem.LinkType -in @("Junction", "SymbolicLink")) {
+      $currentTarget = $targetItem.Target
+      if ($currentTarget -eq $source) {
+        Write-Step "Already linked: $target"
+        continue
+      }
+
+      if ($DryRun) {
+        Write-Step "Would replace existing link $target from $currentTarget to $source"
+      } else {
+        Remove-Item -LiteralPath $target -Force
+        New-Item -ItemType Junction -Path $target -Target $source | Out-Null
+        Write-Step "Re-linked $target -> $source"
+      }
+      continue
     }
-    continue
-  }
 
-  if (-not $ReplaceExisting) {
-    Write-Step "Skipped existing normal directory: $target"
-    Write-Step "Run with -ReplaceExisting to back it up and replace it with a junction."
-    continue
-  }
+    if (-not $ReplaceExisting) {
+      Write-Step "Skipped existing normal directory: $target"
+      Write-Step "Run with -ReplaceExisting to back it up and replace it with a junction."
+      continue
+    }
 
-  $timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
-  $backup = "$target.backup.$timestamp"
+    $timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
+    $backup = "$target.backup.$timestamp"
 
-  if ($DryRun) {
-    Write-Step "Would move $target to $backup"
-    Write-Step "Would link $target -> $source"
-  } else {
-    Move-Item -LiteralPath $target -Destination $backup
-    New-Item -ItemType Junction -Path $target -Target $source | Out-Null
-    Write-Step "Backed up $target to $backup"
-    Write-Step "Linked $target -> $source"
+    if ($DryRun) {
+      Write-Step "Would move $target to $backup"
+      Write-Step "Would link $target -> $source"
+    } else {
+      Move-Item -LiteralPath $target -Destination $backup
+      New-Item -ItemType Junction -Path $target -Target $source | Out-Null
+      Write-Step "Backed up $target to $backup"
+      Write-Step "Linked $target -> $source"
+    }
   }
 }
 
