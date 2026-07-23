@@ -4,16 +4,20 @@
 
 在修改前端代码前，先判断项目实际技术栈。不要只根据用户一句话猜测 Vue2、Vue3、TypeScript、Vite、Tailwind、Pinia 或 uni-app。
 
-## 检查顺序
+技术栈不明确、首次进入项目、或改动涉及栈差异时再检查；纯局部改动只查看与本次任务直接相关的文件。
 
-1. 读取 `package.json`。
+## 按需检查
+
+根据任务范围选择必要信息，不要每次全量扫描：
+
+1. 读取 `package.json`，确认主要依赖和脚本。
 2. 检查依赖版本：`vue`、`@vue/composition-api`、`vite`、`webpack`、`pinia`、`vuex`、`tailwindcss`、`@dcloudio/*`、`uni-app`、`typescript`。
-3. 检查入口文件：`main.js`、`main.ts`、`src/main.js`、`src/main.ts`。
-4. 检查配置文件：`vite.config.*`、`vue.config.js`、`tailwind.config.*`、`tsconfig.json`、`pages.json`、`manifest.json`。
-5. 检查同类 `.vue` 文件写法：Options API、Composition API、`<script setup>`、JS 或 TS。
-6. 检查状态管理：`stores/`、`store/`、`pinia`、`vuex`。
-7. 检查 API 封装：`api/`、`services/`、`request.*`、`http.*`、`utils/request.*`。
-8. 检查样式体系：Tailwind、SCSS、Less、CSS Modules、UnoCSS、组件库样式。
+3. 需要确认入口或框架版本时，检查 `main.js`、`main.ts`、`src/main.js`、`src/main.ts`。
+4. 需要确认构建、样式或多端配置时，检查 `vite.config.*`、`vue.config.js`、`tailwind.config.*`、`tsconfig.json`、`pages.json`、`manifest.json`。
+5. 修改 `.vue` 文件时，优先检查同类文件写法：Options API、Composition API、`<script setup>`、JS 或 TS。
+6. 修改状态管理时，检查 `stores/`、`store/`、`pinia`、`vuex`。
+7. 修改请求时，检查 `api/`、`services/`、`request.*`、`http.*`、`utils/request.*`。
+8. 修改样式时，检查 Tailwind、SCSS、Less、CSS Modules、UnoCSS、组件库样式。
 
 ## 判断规则
 
@@ -24,7 +28,7 @@
 - `package.json` 中 `vue` 主版本为 2。
 - 存在 `new Vue({ render: h => h(App) })`。
 - 大量组件使用 Options API：`data`、`computed`、`watch`、`methods`。
-- 使用 `vuex` 而不是 Pinia。
+- 老项目常见 Vuex；Pinia 也可能存在，需结合 Vue 版本和入口确认。
 
 ### Vue3
 
@@ -33,7 +37,7 @@
 - `package.json` 中 `vue` 主版本为 3。
 - 存在 `createApp(App)`。
 - 大量组件使用 `<script setup>`、`defineProps`、`defineEmits`。
-- 使用 Pinia 或 Vue Router 4。
+- Vue Router 4 或 Pinia 可作为辅助信号，不能单独作为唯一依据。
 
 ### uni-app
 

@@ -1,5 +1,9 @@
 # 常见问题排查
 
+## 默认原则
+
+只按当前现象选择相关小节排查，不要全量检查所有问题。先查最可能、成本最低、和本次改动最相关的点。
+
 ## Vue2 响应式不更新
 
 检查是否新增了对象属性或直接修改数组索引。必要时使用 `this.$set` 或整体替换对象。
@@ -18,7 +22,7 @@ storeToRefs(store)
 
 ## Tailwind class 不生效
 
-检查：
+按现象检查：
 
 - 文件路径是否被 Tailwind content 扫描。
 - class 是否动态拼接导致无法被扫描。
@@ -27,7 +31,7 @@ storeToRefs(store)
 
 ## Vite 环境变量不生效
 
-检查：
+按现象检查：
 
 - 是否使用 `import.meta.env`。
 - 客户端变量是否有 `VITE_` 前缀。
@@ -35,7 +39,7 @@ storeToRefs(store)
 
 ## uni-app 平台差异
 
-检查：
+按目标平台检查：
 
 - 当前运行平台。
 - 是否使用了浏览器专用 API。
@@ -44,7 +48,7 @@ storeToRefs(store)
 
 ## 请求重复执行
 
-检查：
+按触发链路检查：
 
 - `onMounted`、`onShow`、watch 是否重复触发。
 - tab 切换是否重复加载。
@@ -52,7 +56,7 @@ storeToRefs(store)
 
 ## 样式错乱
 
-检查：
+按影响范围检查：
 
 - 全局样式污染。
 - scoped 是否生效。
