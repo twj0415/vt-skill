@@ -33,6 +33,8 @@ const emit = defineEmits<{
 - emits 事件名和参数要明确。
 - 不直接修改 props。
 - 复杂默认值用 `withDefaults` 或项目已有写法。
+- Props 字段说明输入数据的业务含义，Emits 字段说明触发时机；字段注释放在同一行。
+- 复杂组件的业务方法使用一行短中文注释。
 
 ## 响应式选择
 
@@ -68,6 +70,9 @@ const emit = defineEmits<{
 - 重复、过长或影响阅读的条件再抽成 computed。
 - 列表渲染必须有稳定 key。
 - 避免在同一元素上同时使用 `v-if` 和 `v-for`；需要过滤列表时优先使用 computed 或包裹 `template`。
+- 复杂模板按顶部操作区、查询条件区、主内容区、加载状态、空状态、弹窗和抽屉等业务区域加 HTML 注释。
+- 不给每个普通 `div`、Flex 容器或按钮包装层写注释。
+- `@register`、`@success`、`@stale`、`@confirm`、`@detail` 等不直观事件在组件标签前说明用途。
 
 ## 禁止行为
 
