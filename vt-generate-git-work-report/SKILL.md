@@ -1,5 +1,5 @@
 ---
-name: generate-git-work-report
+name: vt-generate-git-work-report
 description: 从一个或多个本地 Git 仓库按任意时间范围提取指定作者的工作，按项目分区、过滤重复提交、校验工作项完整性并生成自然直接的中文周报。用于整理本周、上周、最近 N 天、月份或自定义日期范围的 Git 工作，以及跨项目汇总、项目提交明细和待核实事项。
 ---
 

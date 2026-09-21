@@ -1,0 +1,7 @@
+interface:
+  display_name: "VT Front Skill"
+  short_description: "按需处理 Vue/Vite/uni-app 前端工程任务"
+  default_prompt: "使用 $front-skill 处理当前前端工程任务；只读取与本次任务直接相关的参考资料，匹配现有项目约定，保持最小必要改动。"
+
+policy:
+  allow_implicit_invocation: false

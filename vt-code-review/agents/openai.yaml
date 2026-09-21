@@ -1,0 +1,7 @@
+interface:
+  display_name: "VT Code Review"
+  short_description: "分析 Bug 并简化代码，确认后再修改"
+  default_prompt: "使用 $vt-code-review 优化我指定的文件或目录。先检查 Bug，再分析整体结构以及 template、script、style 是否可以用更简单、更专业、更易维护的方式实现；有真实复用价值时合理拆分组件，避免过度封装。保持现有逻辑、请求、权限和交互不变，先说明范围、问题、方案和预计文件，等待我确认后再执行。"
+
+policy:
+  allow_implicit_invocation: false

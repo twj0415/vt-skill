@@ -1,0 +1,7 @@
+interface:
+  display_name: "vt-generate-git-work-report"
+  short_description: "确认范围后提取多项目 Git 工作并生成精炼中文周报"
+  default_prompt: "使用 $vt-generate-git-work-report 生成上周所有项目的中文周报，先复述范围并等待我确认，确认后只输出周报主体。"
+
+policy:
+  allow_implicit_invocation: false
